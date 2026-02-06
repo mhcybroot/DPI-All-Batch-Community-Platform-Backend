@@ -24,14 +24,18 @@ CREATE TABLE registrations (
     id BIGSERIAL PRIMARY KEY,
     event_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
-    status VARCHAR(50) NOT NULL DEFAULT 'REGISTERED',
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+    rejection_reason TEXT,
+    reviewed_by BIGINT,
+    reviewed_at TIMESTAMP WITHOUT TIME ZONE,
     notes TEXT,
     registered_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     CONSTRAINT fk_registration_event FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
     CONSTRAINT fk_registration_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_registration_reviewer FOREIGN KEY (reviewed_by) REFERENCES users(id),
     CONSTRAINT uq_event_user UNIQUE (event_id, user_id),
-    CONSTRAINT chk_registration_status CHECK (status IN ('REGISTERED', 'WAITLISTED', 'CANCELLED', 'ATTENDED'))
+    CONSTRAINT chk_registration_status CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED', 'WAITLISTED', 'CANCELLED', 'ATTENDED'))
 );
 
 -- Polls Table
