@@ -17,15 +17,16 @@ public interface ProfileMapper {
 
     @Mapping(source = "location.city", target = "locationCity")
     @Mapping(source = "location.country", target = "locationCountry")
+    @Mapping(source = "employmentStatus.statusName", target = "employmentStatus")
     ProfileDto toDto(Profile profile);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "locationCity", target = "location.city")
     @Mapping(source = "locationCountry", target = "location.country")
+    @Mapping(source = "employmentStatus", target = "employmentStatus.statusName")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "skills", ignore = true)
-    @Mapping(target = "employmentStatus", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateProfileFromDto(ProfileUpdateRequest request, @MappingTarget Profile profile);

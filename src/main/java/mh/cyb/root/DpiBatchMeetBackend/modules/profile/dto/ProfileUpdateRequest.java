@@ -12,4 +12,5 @@ public class ProfileUpdateRequest {
     private String portfolioUrl;
     private String locationCity;
     private String locationCountry;
+    private String employmentStatus;
 }

@@ -16,5 +16,6 @@ public class ProfileDto {
     private String portfolioUrl;
     private String locationCity;
     private String locationCountry;
+    private String employmentStatus;
     private Set<SkillDto> skills;
 }
