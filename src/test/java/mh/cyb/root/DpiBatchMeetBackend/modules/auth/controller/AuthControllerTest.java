@@ -56,6 +56,7 @@ class AuthControllerTest {
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         verify(userService).registerUser(any());
+        verify(auditService, times(1)).logAction(eq(null), eq("USER_REGISTRATION"), any(), any(), any());
     }
 
     @Test
@@ -67,12 +68,14 @@ class AuthControllerTest {
         when(authenticationManager.authenticate(any())).thenReturn(authentication);
         when(authentication.getName()).thenReturn("test@test.com");
         when(tokenProvider.generateToken(anyString())).thenReturn("mockToken");
-        when(userService.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(userService.findByEmail(anyString()))
+                .thenReturn(Optional.of(new mh.cyb.root.DpiBatchMeetBackend.modules.user.domain.User()));
 
         ResponseEntity<?> response = authController.loginUser(loginRequest, request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         AuthResponse body = (AuthResponse) response.getBody();
         assertEquals("mockToken", body.getAccessToken());
+        verify(auditService, times(1)).logAction(any(), eq("USER_LOGIN"), any(), any(), any());
     }
 }

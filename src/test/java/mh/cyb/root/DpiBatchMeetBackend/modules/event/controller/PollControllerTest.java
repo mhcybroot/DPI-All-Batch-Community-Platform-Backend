@@ -89,4 +89,14 @@ class PollControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+
+    @Test
+    void getActivePolls_ShouldReturnOk() {
+        when(pollService.getActivePolls()).thenReturn(Collections.emptyList());
+
+        ResponseEntity<List<PollDto>> response = pollController.getActivePolls();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(pollService).getActivePolls();
+    }
 }

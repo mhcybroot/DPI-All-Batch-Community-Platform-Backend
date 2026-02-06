@@ -1,4 +1,4 @@
-package mh.cyb.root.DpiBatchMeetBackend.controller;
+package mh.cyb.root.DpiBatchMeetBackend.modules.profile.controller;
 
 import mh.cyb.root.DpiBatchMeetBackend.modules.user.domain.User;
 import mh.cyb.root.DpiBatchMeetBackend.modules.profile.service.ProfileService;

@@ -95,4 +95,48 @@ class RegistrationControllerTest {
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
+
+    @Test
+    void getMyRegistrations_ShouldReturnOk() {
+        when(userDetails.getUsername()).thenReturn("user@test.com");
+        when(userService.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(registrationService.getUserRegistrations(any())).thenReturn(Collections.emptyList());
+
+        ResponseEntity<List<RegistrationDto>> response = registrationController.getMyRegistrations(userDetails);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(registrationService).getUserRegistrations(user);
+    }
+
+    @Test
+    void getEventRegistrations_ShouldReturnOk() {
+        when(registrationService.getEventRegistrations(anyLong())).thenReturn(Collections.emptyList());
+
+        ResponseEntity<List<RegistrationDto>> response = registrationController.getEventRegistrations(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(registrationService).getEventRegistrations(1L);
+    }
+
+    @Test
+    void getPendingRegistrations_ShouldReturnOk() {
+        when(registrationService.getPendingRegistrations(anyLong())).thenReturn(Collections.emptyList());
+
+        ResponseEntity<List<RegistrationDto>> response = registrationController.getPendingRegistrations(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(registrationService).getPendingRegistrations(1L);
+    }
+
+    @Test
+    void markAsAttended_ShouldReturnOk() {
+        when(userDetails.getUsername()).thenReturn("admin@test.com");
+        when(userService.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(registrationService.markAsAttended(anyLong(), any())).thenReturn(RegistrationDto.builder().build());
+
+        ResponseEntity<RegistrationDto> response = registrationController.markAsAttended(1L, userDetails);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(registrationService).markAsAttended(1L, user);
+    }
 }
