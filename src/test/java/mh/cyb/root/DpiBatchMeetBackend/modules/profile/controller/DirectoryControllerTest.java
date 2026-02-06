@@ -1,7 +1,6 @@
 package mh.cyb.root.DpiBatchMeetBackend.modules.profile.controller;
 
 import mh.cyb.root.DpiBatchMeetBackend.modules.profile.service.DirectoryService;
-import mh.cyb.root.DpiBatchMeetBackend.modules.profile.controller.DirectoryController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

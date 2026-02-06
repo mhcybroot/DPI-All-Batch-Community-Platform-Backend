@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -120,6 +121,51 @@ class PollServiceImplTest {
         pollService.closePoll(1L, user);
 
         assertThat(poll.isClosed()).isTrue();
+    }
+
+    @Test
+    void vote_ShouldThrow_WhenOptionDoesNotBelongToPoll() {
+        Poll otherPoll = Poll.builder().id(2L).build();
+        option1.setPoll(otherPoll);
+        when(pollOptionRepository.findById(1L)).thenReturn(Optional.of(option1));
+
+        assertThatThrownBy(() -> pollService.vote(1L, 1L, user))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("does not belong to the specified poll");
+    }
+
+    @Test
+    void vote_ShouldThrow_WhenPollIsClosed() {
+        poll.setClosed(true);
+        when(pollOptionRepository.findById(1L)).thenReturn(Optional.of(option1));
+
+        assertThatThrownBy(() -> pollService.vote(1L, 1L, user))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("is closed");
+    }
+
+    @Test
+    void vote_ShouldThrow_WhenDeadlineHasPassed() {
+        poll.setDeadline(java.time.LocalDateTime.now().minusHours(1));
+        when(pollOptionRepository.findById(1L)).thenReturn(Optional.of(option1));
+
+        assertThatThrownBy(() -> pollService.vote(1L, 1L, user))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("deadline has passed");
+    }
+
+    @Test
+    void closePoll_ShouldThrow_WhenUserIsNotCreatorOrAdmin() {
+        User otherUser = new User();
+        otherUser.setId(99L);
+        otherUser.setRoles(new java.util.HashSet<>(
+                Collections.singletonList(mh.cyb.root.DpiBatchMeetBackend.modules.user.domain.Role.MEMBER)));
+
+        when(pollRepository.findById(1L)).thenReturn(Optional.of(poll));
+
+        assertThatThrownBy(() -> pollService.closePoll(1L, otherUser))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Only the creator or an administrator");
     }
 
     @Test

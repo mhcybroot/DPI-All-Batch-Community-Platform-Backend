@@ -3,7 +3,6 @@ package mh.cyb.root.DpiBatchMeetBackend.modules.profile.controller;
 import mh.cyb.root.DpiBatchMeetBackend.modules.user.domain.User;
 import mh.cyb.root.DpiBatchMeetBackend.modules.profile.service.ProfileService;
 import mh.cyb.root.DpiBatchMeetBackend.modules.user.service.UserService;
-import mh.cyb.root.DpiBatchMeetBackend.modules.profile.controller.ProfileController;
 import mh.cyb.root.DpiBatchMeetBackend.modules.profile.dto.ProfileDto;
 import mh.cyb.root.DpiBatchMeetBackend.modules.profile.dto.ProfileUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
