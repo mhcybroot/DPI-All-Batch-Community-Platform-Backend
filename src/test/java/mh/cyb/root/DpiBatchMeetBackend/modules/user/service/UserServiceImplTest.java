@@ -124,4 +124,23 @@ class UserServiceImplTest {
 
         assertThat(exists).isTrue();
     }
+
+    @Test
+    void getUserById_ShouldReturnUser_WhenUserExists() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        User result = userService.getUserById(1L);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void getUserById_ShouldThrowException_WhenUserDoesNotExist() {
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.getUserById(1L))
+                .isInstanceOf(mh.cyb.root.DpiBatchMeetBackend.common.exception.ResourceNotFoundException.class)
+                .hasMessage("User not found");
+    }
 }

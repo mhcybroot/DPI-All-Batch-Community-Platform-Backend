@@ -120,4 +120,15 @@ class BloodDonorServiceImplTest {
         verify(bloodDonorProfileRepository).save(profile);
         assertEquals(newDate, profile.getLastDonationDate());
     }
+
+    @Test
+    void getMyProfile_ShouldReturnProfile() {
+        when(bloodDonorProfileRepository.findByUser_Id(1L)).thenReturn(Optional.of(profile));
+        when(bloodDonorMapper.toDto(profile)).thenReturn(profileDto);
+
+        BloodDonorProfileDto result = bloodDonorService.getMyProfile(user);
+
+        assertNotNull(result);
+        assertEquals(profileDto.getId(), result.getId());
+    }
 }

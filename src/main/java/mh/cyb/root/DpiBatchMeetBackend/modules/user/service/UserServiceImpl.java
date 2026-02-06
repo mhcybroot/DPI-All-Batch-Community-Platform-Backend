@@ -117,4 +117,11 @@ public class UserServiceImpl implements UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    @Override
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new mh.cyb.root.DpiBatchMeetBackend.common.exception.ResourceNotFoundException(
+                        "User not found"));
+    }
 }
