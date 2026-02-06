@@ -27,6 +27,7 @@ public interface ProfileMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "skills", ignore = true)
+    @Mapping(target = "dateOfBirth", source = "dateOfBirth")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateProfileFromDto(ProfileUpdateRequest request, @MappingTarget Profile profile);

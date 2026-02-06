@@ -2,6 +2,7 @@ package mh.cyb.root.DpiBatchMeetBackend.modules.profile.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDate;
 
 import mh.cyb.root.DpiBatchMeetBackend.modules.user.domain.User;
 import mh.cyb.root.DpiBatchMeetBackend.common.domain.BaseEntity;
@@ -28,6 +29,8 @@ public class Profile extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String bio;
+
+    private LocalDate dateOfBirth;
 
     private String phoneNumber;
 
