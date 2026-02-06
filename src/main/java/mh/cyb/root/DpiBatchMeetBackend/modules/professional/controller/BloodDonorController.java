@@ -53,4 +53,12 @@ public class BloodDonorController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(bloodDonorService.updateAvailability(isAvailable, user));
     }
+
+    @PatchMapping("/last-donation")
+    public ResponseEntity<BloodDonorProfileDto> updateLastDonationDate(@AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody mh.cyb.root.DpiBatchMeetBackend.modules.professional.dto.UpdateLastDonationRequest request) {
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(bloodDonorService.updateLastDonationDate(request.getLastDonationDate(), user));
+    }
 }

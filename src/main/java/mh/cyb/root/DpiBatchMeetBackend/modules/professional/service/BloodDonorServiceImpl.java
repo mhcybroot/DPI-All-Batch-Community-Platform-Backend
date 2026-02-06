@@ -66,4 +66,13 @@ public class BloodDonorServiceImpl implements BloodDonorService {
         profile = bloodDonorProfileRepository.save(profile);
         return bloodDonorMapper.toDto(profile);
     }
+
+    @Override
+    public BloodDonorProfileDto updateLastDonationDate(java.time.LocalDate lastDonationDate, User user) {
+        BloodDonorProfile profile = bloodDonorProfileRepository.findByUser_Id(user.getId())
+                .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+        profile.setLastDonationDate(lastDonationDate);
+        profile = bloodDonorProfileRepository.save(profile);
+        return bloodDonorMapper.toDto(profile);
+    }
 }

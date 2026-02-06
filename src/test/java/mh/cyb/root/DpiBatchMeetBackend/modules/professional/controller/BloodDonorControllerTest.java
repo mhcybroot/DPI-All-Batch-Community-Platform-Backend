@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 class BloodDonorControllerTest {
@@ -95,6 +96,21 @@ class BloodDonorControllerTest {
         when(bloodDonorService.updateAvailability(true, user)).thenReturn(profileDto);
 
         ResponseEntity<BloodDonorProfileDto> response = bloodDonorController.updateStatus(userDetails, true);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void updateLastDonationDate_ShouldReturnOk() {
+        mh.cyb.root.DpiBatchMeetBackend.modules.professional.dto.UpdateLastDonationRequest request = new mh.cyb.root.DpiBatchMeetBackend.modules.professional.dto.UpdateLastDonationRequest();
+        request.setLastDonationDate(java.time.LocalDate.now());
+
+        when(userDetails.getUsername()).thenReturn("test@test.com");
+        when(userService.findByEmail("test@test.com")).thenReturn(Optional.of(user));
+        when(bloodDonorService.updateLastDonationDate(any(), eq(user))).thenReturn(profileDto);
+
+        ResponseEntity<BloodDonorProfileDto> response = bloodDonorController.updateLastDonationDate(userDetails,
+                request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }

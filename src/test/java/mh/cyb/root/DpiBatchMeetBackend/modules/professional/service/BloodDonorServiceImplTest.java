@@ -106,4 +106,18 @@ class BloodDonorServiceImplTest {
         assertNotNull(result);
         verify(bloodDonorProfileRepository).save(profile);
     }
+
+    @Test
+    void updateLastDonationDate_ShouldUpdateDate() {
+        java.time.LocalDate newDate = java.time.LocalDate.now();
+        when(bloodDonorProfileRepository.findByUser_Id(1L)).thenReturn(Optional.of(profile));
+        when(bloodDonorProfileRepository.save(profile)).thenReturn(profile);
+        when(bloodDonorMapper.toDto(profile)).thenReturn(profileDto);
+
+        BloodDonorProfileDto result = bloodDonorService.updateLastDonationDate(newDate, user);
+
+        assertNotNull(result);
+        verify(bloodDonorProfileRepository).save(profile);
+        assertEquals(newDate, profile.getLastDonationDate());
+    }
 }

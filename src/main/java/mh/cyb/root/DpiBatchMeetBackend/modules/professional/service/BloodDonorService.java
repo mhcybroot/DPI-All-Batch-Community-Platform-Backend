@@ -15,4 +15,6 @@ public interface BloodDonorService {
     List<BloodDonorProfileDto> searchDonors(BloodGroup bloodGroup, String location);
 
     BloodDonorProfileDto updateAvailability(boolean isAvailable, User user);
+
+    BloodDonorProfileDto updateLastDonationDate(java.time.LocalDate lastDonationDate, User user);
 }
