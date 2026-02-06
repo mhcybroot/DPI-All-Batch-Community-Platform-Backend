@@ -30,15 +30,15 @@ public class Poll {
     private Long createdBy;
 
     @Column(name = "is_multiple_choice")
-    private boolean isMultipleChoice;
+    private boolean multipleChoice;
 
     @Column(name = "is_anonymous")
-    private boolean isAnonymous;
+    private boolean anonymous;
 
     private LocalDateTime deadline;
 
     @Column(name = "is_closed")
-    private boolean isClosed;
+    private boolean closed;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

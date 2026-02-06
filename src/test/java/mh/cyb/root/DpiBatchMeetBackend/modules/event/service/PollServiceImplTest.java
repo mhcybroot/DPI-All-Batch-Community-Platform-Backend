@@ -64,7 +64,7 @@ class PollServiceImplTest {
                 .event(event)
                 .question("Test Poll?")
                 .createdBy(user.getId())
-                .isClosed(false)
+                .closed(false)
                 .build();
 
         option1 = PollOption.builder().id(1L).poll(poll).optionText("Option 1").voteCount(0).build();

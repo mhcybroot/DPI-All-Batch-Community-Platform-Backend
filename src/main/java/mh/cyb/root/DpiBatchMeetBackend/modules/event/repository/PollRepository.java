@@ -10,5 +10,5 @@ import java.util.List;
 public interface PollRepository extends JpaRepository<Poll, Long> {
     List<Poll> findByEventId(Long eventId);
 
-    List<Poll> findByIsClosedFalse();
+    List<Poll> findByClosedFalse();
 }

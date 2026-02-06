@@ -13,10 +13,10 @@ public class PollDto {
     private Long eventId;
     private String question;
     private Long createdBy;
-    private boolean isMultipleChoice;
-    private boolean isAnonymous;
+    private boolean multipleChoice;
+    private boolean anonymous;
     private LocalDateTime deadline;
-    private boolean isClosed;
+    private boolean closed;
     private LocalDateTime createdAt;
     private List<PollOptionDto> options;
 }

@@ -17,7 +17,7 @@ public class CreatePollRequest {
     @NotEmpty(message = "At least two options are required")
     private List<String> options;
 
-    private boolean isMultipleChoice;
-    private boolean isAnonymous;
+    private boolean multipleChoice;
+    private boolean anonymous;
     private LocalDateTime deadline;
 }

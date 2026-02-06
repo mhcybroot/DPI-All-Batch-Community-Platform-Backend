@@ -51,10 +51,10 @@ public class PollServiceImpl implements PollService {
                 .event(event)
                 .question(request.getQuestion())
                 .createdBy(creator.getId())
-                .isMultipleChoice(request.isMultipleChoice())
-                .isAnonymous(request.isAnonymous())
+                .multipleChoice(request.isMultipleChoice())
+                .anonymous(request.isAnonymous())
                 .deadline(request.getDeadline())
-                .isClosed(false)
+                .closed(false)
                 .build();
 
         for (String text : request.getOptions()) {
@@ -132,7 +132,7 @@ public class PollServiceImpl implements PollService {
 
     @Override
     public List<PollDto> getActivePolls() {
-        return pollRepository.findByIsClosedFalse().stream()
+        return pollRepository.findByClosedFalse().stream()
                 .map(pollMapper::toDto).collect(Collectors.toList());
     }
 }
