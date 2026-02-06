@@ -50,4 +50,14 @@ public class DirectoryServiceImplTest {
         List<ProfileDto> results = directoryService.searchProfiles("John");
         assertEquals(1, results.size());
     }
+
+    @Test
+    public void testFilterProfiles() {
+        Profile profile = new Profile();
+        when(profileRepository.findAll()).thenReturn(List.of(profile));
+        when(profileMapper.toDto(any(Profile.class))).thenReturn(new ProfileDto());
+
+        List<ProfileDto> results = directoryService.filterProfiles(null, null, null);
+        assertEquals(1, results.size());
+    }
 }

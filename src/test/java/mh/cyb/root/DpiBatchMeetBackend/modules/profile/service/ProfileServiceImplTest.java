@@ -116,7 +116,27 @@ public class ProfileServiceImplTest {
         ProfileDto result = profileService.addSkills(user, Set.of("Java"));
 
         assertNotNull(result);
-        // assertEquals(1, result.getSkills().size()); // Commented out until we confirm
-        // ProfileDto structure
+    }
+
+    @Test
+    public void testUpdatePrivacy() {
+        User user = new User();
+        user.setId(1L);
+        PrivacySetting setting = new PrivacySetting();
+        setting.setUser(user);
+
+        when(privacySettingRepository.findByUserId(1L)).thenReturn(Optional.of(setting));
+        when(privacySettingRepository.save(any(PrivacySetting.class))).thenReturn(setting);
+
+        // Mock getProfile call inside updatePrivacy
+        when(profileRepository.findByUserId(1L)).thenReturn(Optional.of(new Profile()));
+        when(profileMapper.toDto(any(Profile.class))).thenReturn(new ProfileDto());
+
+        ProfileDto result = profileService.updatePrivacy(user, true, false, true, false);
+
+        assertNotNull(result);
+        verify(privacySettingRepository, times(1)).save(setting);
+        assertTrue(setting.isShowEmail());
+        assertFalse(setting.isShowPhone());
     }
 }

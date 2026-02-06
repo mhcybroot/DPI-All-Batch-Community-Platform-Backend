@@ -7,7 +7,6 @@ import mh.cyb.root.DpiBatchMeetBackend.modules.admin.repository.ApprovalRequestR
 import mh.cyb.root.DpiBatchMeetBackend.modules.user.repository.UserRepository;
 import mh.cyb.root.DpiBatchMeetBackend.modules.admin.mapper.ApprovalRequestMapper;
 import mh.cyb.root.DpiBatchMeetBackend.modules.admin.dto.ApprovalRequestDto;
-import mh.cyb.root.DpiBatchMeetBackend.modules.admin.service.AuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -68,6 +67,21 @@ public class ApprovalServiceImplTest {
     }
 
     @Test
+    public void testGetPendingRequests() {
+        ApprovalRequest request = new ApprovalRequest();
+        request.setStatus(ApprovalStatus.PENDING);
+
+        when(approvalRequestRepository.findByStatus(ApprovalStatus.PENDING))
+                .thenReturn(List.of(request));
+        when(approvalRequestMapper.toDto(any(ApprovalRequest.class))).thenReturn(new ApprovalRequestDto());
+
+        List<ApprovalRequestDto> results = approvalService.getPendingRequests();
+
+        assertNotNull(results);
+        assertEquals(1, results.size());
+    }
+
+    @Test
     public void testApproveRequest() {
         User reviewer = new User();
         reviewer.setId(2L);
@@ -89,8 +103,34 @@ public class ApprovalServiceImplTest {
         ApprovalRequestDto approved = approvalService.approveRequest(10L, reviewer);
 
         assertEquals(ApprovalStatus.APPROVED, approved.getStatus());
-        // assertEquals(reviewer, approved.getReviewedBy());
-        assertTrue(request.getUser().isEnabled()); // User should be enabled!
-        verify(userRepository, times(1)).save(user); // Verify user update
+        assertTrue(request.getUser().isEnabled());
+        verify(userRepository, times(1)).save(user);
+        verify(auditService).logAction(eq(2L), eq("APPROVE_USER"), anyString(), anyString(), any());
+    }
+
+    @Test
+    public void testRejectRequest() {
+        User reviewer = new User();
+        reviewer.setId(2L);
+
+        ApprovalRequest request = new ApprovalRequest();
+        request.setId(10L);
+        request.setStatus(ApprovalStatus.PENDING);
+        User user = new User();
+        user.setId(1L);
+        request.setUser(user);
+
+        when(approvalRequestRepository.findById(10L)).thenReturn(Optional.of(request));
+        when(approvalRequestRepository.save(any(ApprovalRequest.class))).thenAnswer(i -> i.getArgument(0));
+
+        ApprovalRequestDto dto = new ApprovalRequestDto();
+        dto.setStatus(ApprovalStatus.REJECTED);
+
+        when(approvalRequestMapper.toDto(any(ApprovalRequest.class))).thenReturn(dto);
+
+        ApprovalRequestDto rejected = approvalService.rejectRequest(10L, reviewer, "Incomplete info");
+
+        assertEquals(ApprovalStatus.REJECTED, rejected.getStatus());
+        verify(auditService).logAction(eq(2L), eq("REJECT_USER"), eq("1"), anyString(), any());
     }
 }

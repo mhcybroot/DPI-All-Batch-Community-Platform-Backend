@@ -17,6 +17,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,5 +50,16 @@ class BirthdayServiceImplTest {
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getFullName()).isEqualTo("John Doe");
+    }
+
+    @Test
+    void getUpcomingBirthdays_ShouldReturnList() {
+        when(profileRepository.findByDateOfBirthMonthAndDay(anyInt(), anyInt()))
+                .thenReturn(Collections.singletonList(profile));
+
+        List<BirthdayAlertDto> result = birthdayService.getUpcomingBirthdays(3);
+
+        assertThat(result).hasSize(3); // 1 per day for 3 days
+        verify(profileRepository, times(3)).findByDateOfBirthMonthAndDay(anyInt(), anyInt());
     }
 }

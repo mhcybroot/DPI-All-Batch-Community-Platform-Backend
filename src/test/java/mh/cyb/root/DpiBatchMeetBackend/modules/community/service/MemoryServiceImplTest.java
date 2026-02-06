@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -36,6 +37,17 @@ class MemoryServiceImplTest {
         memory = new Memory();
         memory.setId(1L);
         memory.setUploaderId(1L);
+    }
+
+    @Test
+    void getAllMemories_ShouldReturnList() {
+        when(memoryRepository.findAllByOrderByCreatedAtDesc()).thenReturn(java.util.List.of(memory));
+        when(memoryMapper.toDto(any())).thenReturn(new MemoryDto());
+
+        java.util.List<MemoryDto> result = memoryService.getAllMemories();
+
+        assertThat(result).hasSize(1);
+        verify(memoryRepository).findAllByOrderByCreatedAtDesc();
     }
 
     @Test
