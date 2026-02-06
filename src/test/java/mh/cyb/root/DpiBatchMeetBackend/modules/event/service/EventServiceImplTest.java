@@ -154,6 +154,15 @@ class EventServiceImplTest {
     }
 
     @Test
+    void deleteEvent_ShouldThrowWhenNotAdmin() {
+        when(eventRepository.existsById(1L)).thenReturn(true);
+
+        assertThatThrownBy(() -> eventService.deleteEvent(1L, organizer))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Only administrators can delete events");
+    }
+
+    @Test
     void updateStatus_ShouldChangeStatus() {
         when(eventRepository.findById(1L)).thenReturn(Optional.of(event));
         when(eventRepository.save(any(Event.class))).thenReturn(event);
@@ -163,5 +172,28 @@ class EventServiceImplTest {
 
         assertThat(event.getStatus()).isEqualTo(EventStatus.COMPLETED);
         verify(eventRepository).save(event);
+    }
+
+    @Test
+    void updateStatus_ShouldThrowWhenUnauthorized() {
+        User otherUser = new User();
+        otherUser.setId(3L);
+        otherUser.setRoles(new java.util.HashSet<>(Collections.singletonList(Role.MEMBER)));
+
+        when(eventRepository.findById(1L)).thenReturn(Optional.of(event));
+
+        assertThatThrownBy(() -> eventService.updateStatus(1L, EventStatus.COMPLETED, otherUser))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Unauthorized");
+    }
+
+    @Test
+    void getEventsByOrganizer_ShouldReturnList() {
+        when(eventRepository.findByOrganizerId(1L)).thenReturn(List.of(event));
+        when(eventMapper.toSummaryDto(event)).thenReturn(new EventSummaryDto());
+
+        List<EventSummaryDto> results = eventService.getEventsByOrganizer(1L);
+
+        assertThat(results).hasSize(1);
     }
 }

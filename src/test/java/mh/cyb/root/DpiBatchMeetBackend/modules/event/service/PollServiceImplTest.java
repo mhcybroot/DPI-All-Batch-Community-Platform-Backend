@@ -19,7 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -131,5 +130,25 @@ class PollServiceImplTest {
         PollDto result = pollService.getPollResults(1L);
 
         assertThat(result.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void getEventPolls_ShouldReturnList() {
+        when(pollRepository.findByEventId(1L)).thenReturn(List.of(poll));
+        when(pollMapper.toDto(poll)).thenReturn(PollDto.builder().id(1L).build());
+
+        List<PollDto> result = pollService.getEventPolls(1L);
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void getActivePolls_ShouldReturnList() {
+        when(pollRepository.findByClosedFalse()).thenReturn(List.of(poll));
+        when(pollMapper.toDto(poll)).thenReturn(PollDto.builder().id(1L).build());
+
+        List<PollDto> result = pollService.getActivePolls();
+
+        assertThat(result).hasSize(1);
     }
 }

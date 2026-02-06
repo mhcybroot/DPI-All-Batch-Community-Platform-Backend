@@ -140,4 +140,84 @@ class RegistrationServiceImplTest {
         assertThat(result.getStatus()).isEqualTo(RegistrationStatus.REJECTED);
         assertThat(registration.getRejectionReason()).isEqualTo("Invalid credentials");
     }
+
+    @Test
+    void getUserRegistrations_ShouldReturnList() {
+        when(registrationRepository.findByUserId(user.getId())).thenReturn(java.util.List.of(registration));
+        when(registrationMapper.toDto(any())).thenReturn(RegistrationDto.builder().id(1L).build());
+
+        java.util.List<RegistrationDto> result = registrationService.getUserRegistrations(user);
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void getEventRegistrations_ShouldReturnList() {
+        when(registrationRepository.findByEventId(event.getId())).thenReturn(java.util.List.of(registration));
+        when(registrationMapper.toDto(any())).thenReturn(RegistrationDto.builder().id(1L).build());
+
+        java.util.List<RegistrationDto> result = registrationService.getEventRegistrations(event.getId());
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void getPendingRegistrations_ShouldReturnList() {
+        when(registrationRepository.findByEventIdAndStatus(1L, RegistrationStatus.PENDING))
+                .thenReturn(java.util.List.of(registration));
+        when(registrationMapper.toDto(any())).thenReturn(RegistrationDto.builder().id(1L).build());
+
+        java.util.List<RegistrationDto> result = registrationService.getPendingRegistrations(1L);
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void markAsAttended_ShouldSuccess_WhenApproved() {
+        registration.setStatus(RegistrationStatus.APPROVED);
+        when(registrationRepository.findById(1L)).thenReturn(Optional.of(registration));
+        when(registrationRepository.save(any(Registration.class))).thenReturn(registration);
+        when(registrationMapper.toDto(any()))
+                .thenReturn(RegistrationDto.builder().status(RegistrationStatus.ATTENDED).build());
+
+        RegistrationDto result = registrationService.markAsAttended(1L, admin);
+
+        assertThat(result.getStatus()).isEqualTo(RegistrationStatus.ATTENDED);
+        assertThat(registration.getStatus()).isEqualTo(RegistrationStatus.ATTENDED);
+    }
+
+    @Test
+    void markAsAttended_ShouldThrow_WhenNotApproved() {
+        registration.setStatus(RegistrationStatus.PENDING);
+        when(registrationRepository.findById(1L)).thenReturn(Optional.of(registration));
+
+        assertThatThrownBy(() -> registrationService.markAsAttended(1L, admin))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Only approved registrations");
+    }
+
+    @Test
+    void isUserRegistered_ShouldReturnTrue_WhenExists() {
+        when(registrationRepository.findByEventIdAndUserId(1L, user.getId())).thenReturn(Optional.of(registration));
+
+        boolean result = registrationService.isUserRegistered(1L, user.getId());
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void getApprovedCount_ShouldReturnCount() {
+        when(registrationRepository.countByEventIdAndStatus(1L, RegistrationStatus.APPROVED)).thenReturn(5);
+
+        int count = registrationService.getApprovedCount(1L);
+
+        assertThat(count).isEqualTo(5);
+    }
+
+    @Test
+    void getApprovedAttendees_ShouldReturnEmptyList() {
+        java.util.List<mh.cyb.root.DpiBatchMeetBackend.modules.profile.dto.ProfileDto> result = registrationService
+                .getApprovedAttendees(1L);
+        assertThat(result).isEmpty();
+    }
 }
