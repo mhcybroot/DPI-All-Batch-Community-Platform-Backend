@@ -1,8 +1,12 @@
 package mh.cyb.root.DpiBatchMeetBackend.controller;
 
-import mh.cyb.root.DpiBatchMeetBackend.domain.User;
+import mh.cyb.root.DpiBatchMeetBackend.modules.user.domain.User;
 import mh.cyb.root.DpiBatchMeetBackend.security.JwtTokenProvider;
-import mh.cyb.root.DpiBatchMeetBackend.service.UserService;
+import mh.cyb.root.DpiBatchMeetBackend.modules.user.service.UserService;
+import mh.cyb.root.DpiBatchMeetBackend.modules.auth.controller.AuthController;
+import mh.cyb.root.DpiBatchMeetBackend.modules.auth.dto.RegisterRequest;
+import mh.cyb.root.DpiBatchMeetBackend.modules.auth.dto.LoginRequest;
+import mh.cyb.root.DpiBatchMeetBackend.modules.user.dto.UserDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -40,21 +44,24 @@ public class AuthControllerTest {
 
     @Test
     public void testRegisterUser() {
-        User user = new User();
-        user.setEmail("test@example.com");
+        RegisterRequest request = new RegisterRequest(
+                "test@example.com", "password", "Name");
+        UserDto userDto = new UserDto();
+        userDto.setEmail("test@example.com");
 
         when(userService.existsByEmail("test@example.com")).thenReturn(false);
-        when(userService.registerUser(any(User.class))).thenReturn(user);
+        when(userService.registerUser(any(RegisterRequest.class)))
+                .thenReturn(userDto);
 
-        ResponseEntity<?> response = authController.registerUser(user);
+        ResponseEntity<?> response = authController.registerUser(request);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        verify(userService, times(1)).registerUser(user);
+        verify(userService, times(1)).registerUser(request);
     }
 
     @Test
     public void testLoginUser() {
-        User login = new User();
+        LoginRequest login = new LoginRequest();
         login.setEmail("test@example.com");
         login.setPassword("password");
 
