@@ -88,18 +88,21 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RegistrationDto> getUserRegistrations(User user) {
         return registrationRepository.findByUserId(user.getId()).stream()
                 .map(registrationMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RegistrationDto> getEventRegistrations(Long eventId) {
         return registrationRepository.findByEventId(eventId).stream()
                 .map(registrationMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RegistrationDto> getPendingRegistrations(Long eventId) {
         return registrationRepository.findByEventIdAndStatus(eventId, RegistrationStatus.PENDING).stream()
                 .map(registrationMapper::toDto).collect(Collectors.toList());
