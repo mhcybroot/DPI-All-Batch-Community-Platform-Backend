@@ -16,12 +16,14 @@ public class ApprovalServiceImpl implements ApprovalService {
     private final ApprovalRequestRepository approvalRequestRepository;
     private final UserRepository userRepository;
     private final ApprovalRequestMapper approvalRequestMapper;
+    private final AuditService auditService;
 
     public ApprovalServiceImpl(ApprovalRequestRepository approvalRequestRepository, UserRepository userRepository,
-            ApprovalRequestMapper approvalRequestMapper) {
+            ApprovalRequestMapper approvalRequestMapper, AuditService auditService) {
         this.approvalRequestRepository = approvalRequestRepository;
         this.userRepository = userRepository;
         this.approvalRequestMapper = approvalRequestMapper;
+        this.auditService = auditService;
     }
 
     @Override
@@ -52,6 +54,10 @@ public class ApprovalServiceImpl implements ApprovalService {
         user.setEnabled(true);
         userRepository.save(user);
 
+        // Log action
+        auditService.logAction(reviewer.getId(), "APPROVE_USER", String.valueOf(user.getId()),
+                "Approved request ID: " + requestId, null);
+
         return approvalRequestMapper.toDto(approvalRequestRepository.save(request));
     }
 
@@ -66,6 +72,11 @@ public class ApprovalServiceImpl implements ApprovalService {
         request.setRejectionReason(reason);
 
         // User remains disabled
+
+        // Log action
+        auditService.logAction(reviewer.getId(), "REJECT_USER", String.valueOf(request.getUser().getId()),
+                "Rejected request ID: " + requestId + ". Reason: " + reason, null);
+
         return approvalRequestMapper.toDto(approvalRequestRepository.save(request));
     }
 }

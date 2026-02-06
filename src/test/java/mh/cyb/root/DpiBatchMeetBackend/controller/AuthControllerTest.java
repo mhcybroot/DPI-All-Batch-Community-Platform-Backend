@@ -7,6 +7,8 @@ import mh.cyb.root.DpiBatchMeetBackend.modules.auth.controller.AuthController;
 import mh.cyb.root.DpiBatchMeetBackend.modules.auth.dto.RegisterRequest;
 import mh.cyb.root.DpiBatchMeetBackend.modules.auth.dto.LoginRequest;
 import mh.cyb.root.DpiBatchMeetBackend.modules.user.dto.UserDto;
+import mh.cyb.root.DpiBatchMeetBackend.modules.admin.service.AuditService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,6 +36,9 @@ public class AuthControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private AuditService auditService;
+
     @InjectMocks
     private AuthController authController;
 
@@ -53,10 +58,15 @@ public class AuthControllerTest {
         when(userService.registerUser(any(RegisterRequest.class)))
                 .thenReturn(userDto);
 
-        ResponseEntity<?> response = authController.registerUser(request);
+        HttpServletRequest httpRequest = mock(HttpServletRequest.class);
+        when(httpRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        ResponseEntity<?> response = authController.registerUser(request, httpRequest);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         verify(userService, times(1)).registerUser(request);
+        verify(auditService, times(1)).logAction(eq(null), eq("USER_REGISTRATION"), anyString(), anyString(),
+                anyString());
     }
 
     @Test
@@ -70,10 +80,15 @@ public class AuthControllerTest {
                 .thenReturn(authentication);
         when(tokenProvider.generateToken(any())).thenReturn("dummy-jwt-token");
         when(authentication.getName()).thenReturn("test@example.com");
+        when(userService.findByEmail(anyString())).thenReturn(java.util.Optional.of(new User()));
 
-        ResponseEntity<?> response = authController.loginUser(login);
+        HttpServletRequest httpRequest = mock(HttpServletRequest.class);
+        when(httpRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        ResponseEntity<?> response = authController.loginUser(login, httpRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
+        verify(auditService, times(1)).logAction(any(), eq("USER_LOGIN"), anyString(), anyString(), anyString());
     }
 }

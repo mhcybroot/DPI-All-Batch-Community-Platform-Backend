@@ -7,6 +7,7 @@ import mh.cyb.root.DpiBatchMeetBackend.modules.admin.repository.ApprovalRequestR
 import mh.cyb.root.DpiBatchMeetBackend.modules.user.repository.UserRepository;
 import mh.cyb.root.DpiBatchMeetBackend.modules.admin.mapper.ApprovalRequestMapper;
 import mh.cyb.root.DpiBatchMeetBackend.modules.admin.dto.ApprovalRequestDto;
+import mh.cyb.root.DpiBatchMeetBackend.modules.admin.service.AuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -30,6 +31,9 @@ public class ApprovalServiceImplTest {
 
     @Mock
     private ApprovalRequestMapper approvalRequestMapper;
+
+    @Mock
+    private AuditService auditService;
 
     @InjectMocks
     private ApprovalServiceImpl approvalService;
