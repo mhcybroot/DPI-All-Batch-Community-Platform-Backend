@@ -1,8 +1,6 @@
 package mh.cyb.root.DpiBatchMeetBackend.modules.community.controller;
 
-import mh.cyb.root.DpiBatchMeetBackend.modules.community.dto.CreatePostRequest;
-import mh.cyb.root.DpiBatchMeetBackend.modules.community.dto.ForumPostDto;
-import mh.cyb.root.DpiBatchMeetBackend.modules.community.dto.ForumCategoryDto;
+import mh.cyb.root.DpiBatchMeetBackend.modules.community.dto.*;
 import mh.cyb.root.DpiBatchMeetBackend.modules.community.service.ForumService;
 import mh.cyb.root.DpiBatchMeetBackend.modules.user.domain.User;
 import mh.cyb.root.DpiBatchMeetBackend.modules.user.service.UserService;
@@ -63,5 +61,107 @@ class ForumControllerTest {
         ResponseEntity<ForumPostDto> response = forumController.createPost(request, userDetails);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    @Test
+    void createCategory_ShouldReturnCreated() {
+        CreateCategoryRequest request = new CreateCategoryRequest();
+        when(forumService.createCategory(any())).thenReturn(new ForumCategoryDto());
+
+        ResponseEntity<ForumCategoryDto> response = forumController.createCategory(request);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    @Test
+    void updateCategory_ShouldReturnOk() {
+        CreateCategoryRequest request = new CreateCategoryRequest();
+        when(forumService.updateCategory(eq(1L), any())).thenReturn(new ForumCategoryDto());
+
+        ResponseEntity<ForumCategoryDto> response = forumController.updateCategory(1L, request);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void deleteCategory_ShouldReturnNoContent() {
+        doNothing().when(forumService).deleteCategory(1L);
+
+        ResponseEntity<Void> response = forumController.deleteCategory(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void getPosts_ShouldReturnOk() {
+        when(forumService.getAllPosts()).thenReturn(Collections.emptyList());
+
+        ResponseEntity<List<ForumPostDto>> response = forumController.getPosts(null);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getPost_ShouldReturnOk() {
+        when(forumService.getPostById(1L)).thenReturn(new ForumPostDto());
+
+        ResponseEntity<ForumPostDto> response = forumController.getPost(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void updatePost_ShouldReturnOk() {
+        UpdatePostRequest request = new UpdatePostRequest();
+        when(userDetails.getUsername()).thenReturn("user@test.com");
+        when(userService.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(forumService.updatePost(anyLong(), any(), anyLong(), anyBoolean())).thenReturn(new ForumPostDto());
+
+        ResponseEntity<ForumPostDto> response = forumController.updatePost(1L, request, userDetails);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void deletePost_ShouldReturnNoContent() {
+        when(userDetails.getUsername()).thenReturn("user@test.com");
+        when(userService.findByEmail(anyString())).thenReturn(Optional.of(user));
+        doNothing().when(forumService).deletePost(anyLong(), anyLong(), anyBoolean());
+
+        ResponseEntity<Void> response = forumController.deletePost(1L, userDetails);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void getComments_ShouldReturnOk() {
+        when(forumService.getCommentsByPost(1L)).thenReturn(Collections.emptyList());
+
+        ResponseEntity<List<ForumCommentDto>> response = forumController.getComments(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void addComment_ShouldReturnCreated() {
+        CreateCommentRequest request = new CreateCommentRequest();
+        when(userDetails.getUsername()).thenReturn("user@test.com");
+        when(userService.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(forumService.addComment(anyLong(), any(), anyLong())).thenReturn(new ForumCommentDto());
+
+        ResponseEntity<ForumCommentDto> response = forumController.addComment(1L, request, userDetails);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    @Test
+    void deleteComment_ShouldReturnNoContent() {
+        when(userDetails.getUsername()).thenReturn("user@test.com");
+        when(userService.findByEmail(anyString())).thenReturn(Optional.of(user));
+        doNothing().when(forumService).deleteComment(anyLong(), anyLong(), anyBoolean());
+
+        ResponseEntity<Void> response = forumController.deleteComment(1L, 1L, userDetails);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 }

@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 class BirthdayControllerTest {
@@ -32,6 +33,13 @@ class BirthdayControllerTest {
     void getTodayBirthdays_ShouldReturnOk() {
         when(birthdayService.getTodayBirthdays()).thenReturn(Collections.emptyList());
         ResponseEntity<List<BirthdayAlertDto>> response = birthdayController.getTodayBirthdays();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getUpcomingBirthdays_ShouldReturnOk() {
+        when(birthdayService.getUpcomingBirthdays(anyInt())).thenReturn(Collections.emptyList());
+        ResponseEntity<List<BirthdayAlertDto>> response = birthdayController.getUpcomingBirthdays(7);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }

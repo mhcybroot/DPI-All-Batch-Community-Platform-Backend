@@ -63,4 +63,25 @@ class NoticeControllerTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         verify(noticeService).createNotice(any(), eq(1L));
     }
+
+    @Test
+    void updateNotice_ShouldReturnOk() {
+        CreateNoticeRequest request = new CreateNoticeRequest();
+        when(noticeService.updateNotice(eq(1L), any())).thenReturn(new NoticeDto());
+
+        ResponseEntity<NoticeDto> response = noticeController.updateNotice(1L, request);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(noticeService).updateNotice(eq(1L), any());
+    }
+
+    @Test
+    void deleteNotice_ShouldReturnNoContent() {
+        doNothing().when(noticeService).deleteNotice(1L);
+
+        ResponseEntity<Void> response = noticeController.deleteNotice(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(noticeService).deleteNotice(1L);
+    }
 }
