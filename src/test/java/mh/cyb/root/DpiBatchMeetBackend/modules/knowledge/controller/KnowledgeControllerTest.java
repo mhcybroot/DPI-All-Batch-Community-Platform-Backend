@@ -124,4 +124,14 @@ class KnowledgeControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+
+    @Test
+    void voteAnswer_ShouldReturnOk() {
+        VoteRequest request = new VoteRequest();
+        request.setVoteType(VoteType.UP);
+
+        ResponseEntity<Void> response = knowledgeController.voteAnswer(1L, userDetails, request);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
 }

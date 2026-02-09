@@ -137,4 +137,42 @@ class KnowledgeServiceImplTest {
         verify(answerRepository, times(1)).findByQuestionIdOrderByIsAcceptedDescUpvotesDesc(1L); // Called to unaccept
                                                                                                  // others
     }
+
+    @Test
+    void getAllQuestions_ShouldReturnPage() {
+        when(questionRepository.findAllByOrderByCreatedAtDesc(any(org.springframework.data.domain.Pageable.class)))
+                .thenReturn(org.springframework.data.domain.Page.empty());
+
+        var result = knowledgeService.getAllQuestions("newest", org.springframework.data.domain.Pageable.unpaged());
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void getAnswers_ShouldReturnList() {
+        when(answerRepository.findByQuestionIdOrderByIsAcceptedDescUpvotesDesc(1L))
+                .thenReturn(Collections.emptyList());
+
+        var result = knowledgeService.getAnswers(1L);
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void voteAnswer_ShouldSaveVote() {
+        Long aId = 1L;
+        Answer answer = new Answer();
+        answer.setId(aId);
+        answer.setUpvotes(0);
+
+        when(answerRepository.findById(aId)).thenReturn(Optional.of(answer));
+        when(voteRepository.findByUserIdAndTargetIdAndTargetType(any(), any(), any()))
+                .thenReturn(Optional.empty());
+
+        knowledgeService.voteAnswer(aId, VoteType.UP, user);
+
+        verify(voteRepository).save(any(KnowledgeVote.class));
+        verify(answerRepository).save(answer);
+        assertEquals(1, answer.getUpvotes());
+    }
 }
