@@ -8,7 +8,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/dpi_batch_meet
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       - db
@@ -24,6 +24,23 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  db-backup:
+    image: prodrigestivill/postgres-backup-local
+    restart: always
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=dpi_batch_meet
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - SCHEDULE=@daily
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      - db
 
 volumes:
   postgres_data:
