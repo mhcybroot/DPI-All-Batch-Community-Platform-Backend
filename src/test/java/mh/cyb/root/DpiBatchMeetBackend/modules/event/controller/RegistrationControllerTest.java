@@ -1,6 +1,6 @@
 package mh.cyb.root.DpiBatchMeetBackend.modules.event.controller;
 
-import mh.cyb.root.DpiBatchMeetBackend.modules.event.dto.RegisterRequest;
+import mh.cyb.root.DpiBatchMeetBackend.modules.event.dto.EventRegisterRequest;
 import mh.cyb.root.DpiBatchMeetBackend.modules.event.dto.RegistrationDto;
 import mh.cyb.root.DpiBatchMeetBackend.modules.event.dto.RejectRegistrationRequest;
 import mh.cyb.root.DpiBatchMeetBackend.modules.event.service.RegistrationService;
@@ -49,7 +49,7 @@ class RegistrationControllerTest {
 
     @Test
     void register_ShouldReturnCreated() {
-        RegisterRequest request = new RegisterRequest();
+        EventRegisterRequest request = new EventRegisterRequest();
         when(userDetails.getUsername()).thenReturn("user@test.com");
         when(userService.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(registrationService.register(anyLong(), any(), any())).thenReturn(RegistrationDto.builder().build());

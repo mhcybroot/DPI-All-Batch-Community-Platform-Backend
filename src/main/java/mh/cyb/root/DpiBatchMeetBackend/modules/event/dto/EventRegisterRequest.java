@@ -3,6 +3,6 @@ package mh.cyb.root.DpiBatchMeetBackend.modules.event.dto;
 import lombok.Data;
 
 @Data
-public class RegisterRequest {
+public class EventRegisterRequest {
     private String notes;
 }

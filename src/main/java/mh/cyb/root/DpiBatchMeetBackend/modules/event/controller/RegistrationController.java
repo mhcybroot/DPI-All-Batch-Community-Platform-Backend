@@ -1,6 +1,6 @@
 package mh.cyb.root.DpiBatchMeetBackend.modules.event.controller;
 
-import mh.cyb.root.DpiBatchMeetBackend.modules.event.dto.RegisterRequest;
+import mh.cyb.root.DpiBatchMeetBackend.modules.event.dto.EventRegisterRequest;
 import mh.cyb.root.DpiBatchMeetBackend.modules.event.dto.RegistrationDto;
 import mh.cyb.root.DpiBatchMeetBackend.modules.event.dto.RejectRegistrationRequest;
 import mh.cyb.root.DpiBatchMeetBackend.modules.event.service.RegistrationService;
@@ -33,7 +33,7 @@ public class RegistrationController {
     @PostMapping("/events/{eventId}/register")
     @Operation(summary = "Register for event", description = "Signs up the current user for an event. Status will be PENDING or WAITLISTED.")
     public ResponseEntity<RegistrationDto> register(@PathVariable Long eventId,
-            @RequestBody RegisterRequest request,
+            @RequestBody EventRegisterRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
         User user = getUser(userDetails);
         return new ResponseEntity<>(registrationService.register(eventId, user, request.getNotes()),
