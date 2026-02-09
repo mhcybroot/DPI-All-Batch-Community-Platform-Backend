@@ -7,3 +7,6 @@ build/
 .gitignore
 .idea
 .vscode
+backups/
+docker-compose.yml
+api_test.sh
